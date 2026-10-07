@@ -1,7 +1,4 @@
-﻿server:
-  port: 8081
-
-spring:
+﻿spring:
   servlet:
     multipart:
       max-file-size: 500MB
@@ -9,4 +6,4 @@ spring:
 
 gemini:
   api:
-    key: YOUR_GEMINI_API_KEY_HERE
+    key: ${GEMINI_API_KEY:YOUR_GEMINI_API_KEY_HERE}
