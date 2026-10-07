@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>SAGA AI Thumbnail Studio (MVP)</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .mvp-container { max-width: 800px; margin: 2rem auto; padding: 2.5rem; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.06); border: 1px solid #eee; }
+        .dropzone { border: 2px dashed #ccc; padding: 4rem 2rem; text-align: center; margin-bottom: 1.5rem; border-radius: 8px; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+        .dropzone:hover, .dropzone.dragover { border-color: #2569ed; background-color: #f5f9ff; }
+        .button { padding: 1rem 2rem; background-color: #2569ed; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s; font-size: 1rem; }
+        .button:hover { background-color: #1a4fba; }
+        .button:disabled { background-color: #ccc !important; cursor: not-allowed; border-color: #ccc !important; color: #fff !important; }
+        .result-container { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; align-items: center; width: 100%; }
+        .result-item { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px; border: 1px solid #ddd; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .error { color: #d32f2f; }
+        .ratio-selector { display: flex; gap: 1.5rem; margin-bottom: 2rem; align-items: center; padding: 1rem; background: #f8f9fa; border-radius: 8px; }
+        .ratio-selector label { display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-weight: 500; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body style="background-color: #f8f9fc;">
+    <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 2.3 6.7L21 12l-6.7 2.3L12 21l-2.3-6.7L3 12l6.7-2.3L12 3Z"/><path d="m20 2 .6 1.4L22 4l-1.4.6L20 6l-.6-1.4L18 4l1.4-.6L20 2Z"/></symbol>
+        <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    </svg>
+
+    <header>
+        <div class="nav-inner">
+            <a class="brand" href="./" aria-label="SAGA 홈"><b>S</b><span>SAGA<small>AI THUMBNAIL STUDIO</small></span></a>
+            <nav aria-label="메인 메뉴">
+                <a class="active" href="mvp.html">MVP 버전 (안정화)</a>
+            </nav>
+            <a href="index.html" class="status-pill" style="text-decoration:none; background-color:#fff; color:#48a2ff; border: 1px solid #48a2ff;">← 메인 스튜디오로 돌아가기</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero" aria-labelledby="hero-title" style="padding-bottom: 2rem;">
+            <div class="hero-copy">
+                <span class="hero-kicker"><svg class="icon"><use href="#icon-spark"/></svg> SAGA AI CREATIVE STUDIO (MVP)</span>
+                <h1 id="hero-title">영상의 메시지를,<br><em>클릭하고 싶은</em> 디자인으로.</h1>
+                <p>문구부터 디자인까지, 당신의 영상에 어울리는 썸네일.<br>복잡한 설정 없이 지금 바로 체험해보세요.</p>
+                <div class="hero-benefits">
+                    <span><svg class="icon"><use href="#icon-check"/></svg>빠른 썸네일 생성</span>
+                    <span><svg class="icon"><use href="#icon-check"/></svg>유튜브 & 쇼츠 비율</span>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="sample-label">디자인 샘플</div>
+                <figure class="sample-landscape">
+                    <img src="assets/studio-sample.png" alt="가로 샘플" style="width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <figcaption><span class="sample-dot"></span> 같은 브랜드, 새로운 이야기 <b>16:9</b></figcaption>
+                </figure>
+                <figure class="sample-portrait">
+                    <img src="assets/studio-sample.png" alt="세로 샘플" style="width: 100%; height: 100%; object-fit: cover; object-position: center; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    <figcaption>9:16</figcaption>
+                </figure>
+                <div class="hero-float">
+                    <span class="float-icon"><svg class="icon"><use href="#icon-spark"/></svg></span>
+                    <span><strong>하나의 시리즈, 두 가지 비율</strong><small>일관된 디자인으로 완성하세요</small></span>
+                </div>
+            </div>
+        </section>
+
+        <div class="mvp-container">
+            <div style="margin-bottom: 2rem; border-bottom: 2px solid #f0f0f0; padding-bottom: 1rem;">
+                <h2 style="font-size: 1.5rem; margin: 0; color: #111;">새로운 썸네일 만들기</h2>
+                <p style="color: #666; margin-top: 0.5rem; font-size: 0.95rem;">실제 영상으로 제작·저장 흐름을 확인하세요.</p>
+            </div>
+            
+            <div id="dropzone" class="dropzone" onclick="document.getElementById('video-file').click()">
+                <p style="font-size: 1.1rem; color: #555; margin-bottom: 1.5rem;">여기로 MP4 영상을 드래그하거나 클릭하여 업로드하세요.</p>
+                <input type="file" id="video-file" accept="video/mp4,video/quicktime" style="display: none;">
+                <button type="button" class="button" style="background:#444;">파일 선택하기</button>
+            </div>
+            
+            <div id="selected-file-info" style="margin-bottom: 1.5rem; font-weight: bold; color: #2569ed; display: none;">선택된 파일이 없습니다.</div>
+
+            <div class="ratio-selector">
+                <span style="font-weight: bold; color: #333;">출력 화면 비율:</span>
+                <label><input type="radio" name="ratio" value="16:9" checked> 16:9 (유튜브)</label>
+                <label><input type="radio" name="ratio" value="9:16"> 9:16 (쇼츠)</label>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                <button id="btn-extract-image" class="button" style="flex:1;" disabled><svg class="icon" style="margin-right:8px;"><use href="#icon-spark"/></svg>이미지 썸네일 만들기</button>
+                <button id="btn-extract-video" class="button" style="flex:1; background:#fff; color:#2569ed; border:2px solid #2569ed;" disabled>하이라이트 쇼츠 추출</button>
+            </div>
+
+            <div id="notice" style="margin-bottom: 1.5rem; font-weight: bold; padding: 1rem; background: #fff3cd; color: #856404; border-radius: 8px; display: none; border: 1px solid #ffeeba;"></div>
+            
+            <div id="loading-indicator" style="display: none; text-align: center; padding: 2.5rem; background: #f5f9ff; border-radius: 8px; color: #2569ed; font-weight: bold; border: 1px solid #cce5ff;">
+                <svg class="icon" style="animation: spin 2s linear infinite; margin-right: 0.5rem; width: 24px; height: 24px;"><use href="#icon-spark"/></svg>
+                <span style="font-size: 1.1rem;">AI 분석 및 미디어 생성 중... 잠시만 기다려주세요 (최대 1~2분 소요)</span>
+            </div>
+
+            <div id="result-container" class="result-container" style="display: none; width: 100%;"></div>
+        </div>
+    </main>
+
+    <script src="mvp.js"></script>
+    <script>
+        // 파일 선택 시 안내 문구 표시 트윅
+        const fileInfo = document.getElementById('selected-file-info');
+        const observer = new MutationObserver(() => {
+            if (fileInfo.textContent.includes('선택된 파일:')) {
+                fileInfo.style.display = 'block';
+                fileInfo.style.padding = '1rem';
+                fileInfo.style.background = '#e8f0fe';
+                fileInfo.style.borderRadius = '8px';
+            }
+        });
+        observer.observe(fileInfo, { childList: true, characterData: true, subtree: true });
+
+        // 에러 Notice 표시 트윅
+        const noticeEl = document.getElementById('notice');
+        const noticeObserver = new MutationObserver(() => {
+            if (noticeEl.textContent.trim().length > 0) {
+                noticeEl.style.display = 'block';
+                if (noticeEl.classList.contains('error')) {
+                    noticeEl.style.background = '#f8d7da';
+                    noticeEl.style.color = '#721c24';
+                    noticeEl.style.borderColor = '#f5c6cb';
+                } else {
+                    noticeEl.style.background = '#d4edda';
+                    noticeEl.style.color = '#155724';
+                    noticeEl.style.borderColor = '#c3e6cb';
+                }
+            } else {
+                noticeEl.style.display = 'none';
+            }
+        });
+        noticeObserver.observe(noticeEl, { childList: true, characterData: true, subtree: true });
+    </script>
+</body>
+</html>

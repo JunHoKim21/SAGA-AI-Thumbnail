@@ -1,0 +1,28 @@
+﻿# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node
+node_modules/
+dist/
+.pnpm-store/
+.env
+
+# Java/Spring Boot
+build/
+.gradle/
+out/
+target/
+*.class
+
+# Temp videos and images
+*.mp4
+*.jpg
+*.png
+*.mp3
